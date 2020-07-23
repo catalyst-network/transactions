@@ -90,7 +90,7 @@ export async function spamTransactions(transactionsNo) {
         // console.log(to);
         const tx = await constructTransaction(
             nonce, (3 + 4 * Math.random()).toFixed(2),
-            (19000 + 3000 * Math.random()).toFixed(0),
+            (21005 + 3000 * Math.random()).toFixed(0),
             to,
             (0.05 + 0.1 * Math.random()).toString()
         );
