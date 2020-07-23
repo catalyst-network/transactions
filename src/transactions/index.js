@@ -89,7 +89,8 @@ export async function spamTransactions(transactionsNo) {
         let to = new RandExp("^0x[0-9a-fA-F]{40}$").gen(); //'0x91470b2c2ab22f6eccf7b347138a43c781b8b831'
         // console.log(to);
         const tx = await constructTransaction(
-            nonce, (3 + 4 * Math.random()).toFixed(2),
+            nonce + i, 
+            (3 + 4 * Math.random()).toFixed(2),
             (21005 + 3000 * Math.random()).toFixed(0),
             to,
             (0.05 + 0.1 * Math.random()).toString()
