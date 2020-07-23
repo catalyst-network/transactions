@@ -1,9 +1,10 @@
 import Web3 from 'web3';
+import ERPC from '@etclabscore/ethereum-json-rpc';
 
 async function loadProvider() {
     const mnemonic = 'silly funny task remove diamond maximum rack awesome sting chalk recycle also social banner verify';
     const { HDWalletProvider } = (await import('@catalyst-net-js/truffle-provider'));
-    return new HDWalletProvider(mnemonic, 'http://localhost:5005/api/eth/request');
+    return new HDWalletProvider(mnemonic, 'https://api.catalystnet.org:2053/api/eth/request');
 }
 
 async function loadTxLib() {
@@ -33,7 +34,7 @@ const { numberToHex, toWei, bytesToHex } = Web3.utils;
 //     });
 // }
 
-const web3 = new Web3('http://localhost:5005/api/eth/request');
+const web3 = new Web3('https://api.catalystnet.org:2053/api/eth/request');
 
 function broadcastTransaction(raw) {
     return new Promise((resolve, reject) => {
@@ -44,6 +45,32 @@ function broadcastTransaction(raw) {
             return resolve(hash);
         });
     });
+}
+
+async function broadcastBatchedTransactions(txs) {
+    const rpc = new ERPC({
+        transport: {
+          host: 'api.catalystnet.org',
+          port: 2053,
+          type: 'https',
+          path: '/api/eth/request',
+        },
+      });
+      rpc.startBatch();
+      setInterval(() => {
+        rpc.stopBatch();
+        rpc.startBatch();
+      }, 10000);
+      // await rpc.eth_sendRawTransaction(txs[0]);
+      const transactions = [];
+      txs.forEach(async (tx) => {
+        transactions.push(await rpc.eth_sendRawTransaction(tx));
+
+      })
+
+      // clearInterval(batchRpc);
+
+      return transactions;
 }
 
 async function constructTransaction(nonce, gasPrice, gasLimit, to, value) {
@@ -89,14 +116,15 @@ export async function spamTransactions(transactionsNo) {
         let to = new RandExp("^0x[0-9a-fA-F]{40}$").gen(); //'0x91470b2c2ab22f6eccf7b347138a43c781b8b831'
         // console.log(to);
         const tx = await constructTransaction(
-            nonce, (3 + 4 * Math.random()).toFixed(2),
-            (21005 + 3000 * Math.random()).toFixed(0),
+            nonce, 1,
+            21004,
             to,
-            (0.05 + 0.1 * Math.random()).toString()
+            0
         );
 
         await tx.sign(provider.wallets[address].getPrivateKey());
-        transactions.push(broadcastTransaction(bytesToHex(tx.serialize())));
+        transactions.push(bytesToHex(tx.serialize()));
+        await broadcastBatchedTransactions(transactions);
     }
 
     return transactions;
