@@ -4,7 +4,7 @@ import ERPC from '@etclabscore/ethereum-json-rpc';
 async function loadProvider() {
     const mnemonic = 'silly funny task remove diamond maximum rack awesome sting chalk recycle also social banner verify';
     const { HDWalletProvider } = (await import('@catalyst-net-js/truffle-provider'));
-    return new HDWalletProvider(mnemonic, 'https://api.catalystnet.org:2053/api/eth/request');
+    return new HDWalletProvider(mnemonic, 'http://localhost:5005/api/eth/request');
 }
 
 async function loadTxLib() {
@@ -34,7 +34,7 @@ const { numberToHex, toWei, bytesToHex } = Web3.utils;
 //     });
 // }
 
-const web3 = new Web3('https://api.catalystnet.org:2053/api/eth/request');
+const web3 = new Web3('http://localhost:5005/api/eth/request');
 
 function broadcastTransaction(raw) {
     return new Promise((resolve, reject) => {
@@ -50,9 +50,9 @@ function broadcastTransaction(raw) {
 async function broadcastBatchedTransactions(txs) {
     const rpc = new ERPC({
         transport: {
-          host: 'api.catalystnet.org',
-          port: 2053,
-          type: 'https',
+          host: 'localhost',
+          port: 5005,
+          type: 'http',
           path: '/api/eth/request',
         },
       });
