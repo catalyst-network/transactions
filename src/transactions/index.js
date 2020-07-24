@@ -124,8 +124,10 @@ export async function spamTransactions(transactionsNo) {
 
         await tx.sign(provider.wallets[address].getPrivateKey());
         transactions.push(bytesToHex(tx.serialize()));
-        await broadcastBatchedTransactions(transactions);
+        
     }
+
+    await broadcastBatchedTransactions(transactions);
 
     return transactions;
 }
